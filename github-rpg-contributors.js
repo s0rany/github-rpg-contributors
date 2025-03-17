@@ -20,6 +20,10 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
 
   constructor() {
     super();
+    this.organization = "";
+    this.repo = "";
+    this.contributors = [];
+    this.limit = 10;
     this.title = "";
     this.t = this.t || {};
     this.t = {
@@ -40,6 +44,10 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       title: { type: String },
+      organization: { type: String },
+      repo: { type: String },
+      contributors: { type: Array },
+      limit: { type: Number },
     };
   }
 
@@ -62,12 +70,42 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
       }
     `];
   }
+  
+  async fetchContributors() {
+    const url = `https://api.github.com/repos/${this.organization}/${this.repo}/contributors`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+    
+    const data = await response.json();
+    this.contributors = data.slice(0, this.limit);
+    } catch (error) {
+      console.error(`Error fetching contributors: ${error.message}`);
+      this.contributors = [];
+    }
+  }
+
+  updated(changedProperties) {
+    if (changedProperties.has("organization") || changedProperties.has("repo")) {
+      this.fetchContributors();
+    }
+  }
 
   // Lit render the HTML
   render() {
     return html`
 <div class="wrapper">
-  <h3><span>${this.t.title}:</span> ${this.title}</h3>
+  <h3>${this.title} - ${this.organization}/${this.repo}</h3>
+  <ul class ="contributors">
+    ${this.contributors.map(contributor => html`
+      <li>
+        <img src="${contributor.avatar_url}" alt="${contributor.login}" />
+        <a href="${contributor.html_url}" target="_blank">${contributor.login}</a>
+      </li>
+      `)}
+  </ul>
   <slot></slot>
 </div>`;
   }
@@ -79,6 +117,7 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
     return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url)
       .href;
   }
+
 }
 
 globalThis.customElements.define(GithubRpgContributors.tag, GithubRpgContributors);
