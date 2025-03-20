@@ -57,7 +57,7 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
     return [super.styles,
     css`
       :host {
-        display: block;
+        display: inline-flex;
         color: var(--ddd-theme-primary);
         background-color: var(--ddd-theme-accent);
         font-family: var(--ddd-font-navigation);
@@ -68,6 +68,17 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
       }
       h3 span {
         font-size: var(--github-rpg-contributors-label-font-size, var(--ddd-font-size-s));
+      }
+      .contributors {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--ddd-spacing-20); 
+      }
+      .rpg {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
       }
     `];
   }
@@ -89,7 +100,7 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
   }
 
   updated(changedProperties) {
-    if (changedProperties.has("organization") && changedProperties.has("repo")) {
+    if (changedProperties.has("organization") || changedProperties.has("repo")) {
       this.fetchContributors();
     }
   }
@@ -98,14 +109,22 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
   render() {
     return html`
     <div class="wrapper">
-      <h3>${this.title} - ${this.organization}/${this.repo}</h3>
-      <ul class ="contributors">
-        ${this.contributors.map(contributor => html`
+      <h3>
+        <a href="https://github.com/${this.organization}/${this.repo}" target="_blank">
+          ${this.organization}/${this.repo}
+        </a>
+      </h3>
+      <div class ="contributors">
+        ${this.contributors.map((item) => html`
           <div class="rpg">
-            <rpg-character  seed="${item.login}"></rpg-character>
+            <a href="https://github.com/${item.login}" target="_blank">
+               <rpg-character seed="${item.login}"></rpg-character>
+            </a>            
+            <p>${item.login}</p>
+            <p>Contributions: ${item.contributions}</p>
         </div>
           `)}
-      </ul>
+        </div>
       <slot></slot>
     </div>`;
   }
