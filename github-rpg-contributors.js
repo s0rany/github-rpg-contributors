@@ -79,9 +79,9 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
-    
-    const data = await response.json();
-    this.contributors = data.slice(0, this.limit);
+      
+      const data = await response.json();
+      this.contributors = data.slice(0, this.limit);
     } catch (error) {
       console.error(`Error fetching contributors: ${error.message}`);
       this.contributors = [];
@@ -89,7 +89,7 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
   }
 
   updated(changedProperties) {
-    if (changedProperties.has("organization") || changedProperties.has("repo")) {
+    if (changedProperties.has("organization") && changedProperties.has("repo")) {
       this.fetchContributors();
     }
   }
@@ -97,17 +97,17 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
   // Lit render the HTML
   render() {
     return html`
-<div class="wrapper">
-  <h3>${this.title} - ${this.organization}/${this.repo}</h3>
-  <ul class ="contributors">
-    ${this.contributors.map(contributor => html`
-      <li>
-        <rpg-character  seed="${item.login}"></rpg-character>
-      </li>
-      `)}
-  </ul>
-  <slot></slot>
-</div>`;
+    <div class="wrapper">
+      <h3>${this.title} - ${this.organization}/${this.repo}</h3>
+      <ul class ="contributors">
+        ${this.contributors.map(contributor => html`
+          <div class="rpg">
+            <rpg-character  seed="${item.login}"></rpg-character>
+        </div>
+          `)}
+      </ul>
+      <slot></slot>
+    </div>`;
   }
 
   /**
