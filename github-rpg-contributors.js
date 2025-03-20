@@ -21,11 +21,11 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
 
   constructor() {
     super();
-    this.organization = "";
-    this.repo = "";
-    this.contributors = [];
-    this.limit = 10;
-    this.title = "";
+    this.organization="";
+    this.repo="";
+    this.contributors=[];
+    this.limit=10;
+    this.title="";
     this.t = this.t || {};
     this.t = {
       ...this.t,
