@@ -102,8 +102,7 @@ export class GithubRpgContributors extends DDDSuper(I18NMixin(LitElement)) {
   <ul class ="contributors">
     ${this.contributors.map(contributor => html`
       <li>
-        <img src="${contributor.avatar_url}" alt="${contributor.login}" />
-        <a href="${contributor.html_url}" target="_blank">${contributor.login}</a>
+        <rpg-character  seed="${item.login}"></rpg-character>
       </li>
       `)}
   </ul>
